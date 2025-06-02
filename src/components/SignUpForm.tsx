@@ -13,6 +13,7 @@ export function SignUpForm() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const { signUp } = useAuth()
   const { toast } = useToast()
 
@@ -20,6 +21,7 @@ export function SignUpForm() {
     e.preventDefault()
     setLoading(true)
     setError('')
+    setSuccess('')
 
     if (password !== confirmPassword) {
       setError('As senhas não coincidem')
@@ -34,11 +36,27 @@ export function SignUpForm() {
     }
 
     try {
-      await signUp(email, password)
-      toast({
-        title: "Cadastro realizado com sucesso!",
-        description: "Verifique seu email para confirmar a conta.",
-      })
+      const { error, needsConfirmation } = await signUp(email, password)
+      
+      if (error) {
+        if (error.message.includes('User already registered')) {
+          setError('Este email já está cadastrado. Tente fazer login.')
+        } else {
+          setError(error.message || 'Erro ao criar conta')
+        }
+      } else if (needsConfirmation) {
+        setSuccess('Conta criada! Verifique seu email para confirmar a conta antes de fazer login.')
+        toast({
+          title: "Conta criada com sucesso!",
+          description: "Verifique seu email para confirmar a conta.",
+        })
+      } else {
+        setSuccess('Conta criada e login realizado com sucesso!')
+        toast({
+          title: "Cadastro realizado com sucesso!",
+          description: "Bem-vindo!",
+        })
+      }
     } catch (err: any) {
       setError(err.message || 'Erro ao criar conta')
     } finally {
@@ -68,6 +86,7 @@ export function SignUpForm() {
           onChange={(e) => setPassword(e.target.value)}
           required
           disabled={loading}
+          minLength={6}
         />
       </div>
       <div className="space-y-2">
@@ -84,6 +103,11 @@ export function SignUpForm() {
       {error && (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+      {success && (
+        <Alert>
+          <AlertDescription>{success}</AlertDescription>
         </Alert>
       )}
       <Button type="submit" className="w-full" disabled={loading}>

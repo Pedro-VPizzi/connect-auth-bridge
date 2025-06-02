@@ -27,7 +27,13 @@ export function LoginForm() {
         description: "Bem-vindo de volta!",
       })
     } catch (err: any) {
-      setError(err.message || 'Erro ao fazer login')
+      if (err.message.includes('Invalid login credentials')) {
+        setError('Email ou senha incorretos. Verifique se você confirmou seu email após o cadastro.')
+      } else if (err.message.includes('Email not confirmed')) {
+        setError('Email não confirmado. Verifique sua caixa de entrada e confirme seu email.')
+      } else {
+        setError(err.message || 'Erro ao fazer login')
+      }
     } finally {
       setLoading(false)
     }

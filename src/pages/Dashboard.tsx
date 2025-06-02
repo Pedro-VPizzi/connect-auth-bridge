@@ -1,6 +1,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ProfileCard } from '@/components/ProfileCard'
 import { useAuth } from '@/hooks/useAuth'
 import { useToast } from '@/hooks/use-toast'
 
@@ -49,20 +50,9 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Informações da Conta</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2 text-sm">
-                <p><strong>ID:</strong> {user?.id}</p>
-                <p><strong>Email:</strong> {user?.email}</p>
-                <p><strong>Criado em:</strong> {
-                  user?.created_at ? new Date(user.created_at).toLocaleDateString('pt-BR') : 'N/A'
-                }</p>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="md:col-span-2">
+            <ProfileCard />
+          </div>
 
           <Card>
             <CardHeader>
@@ -71,10 +61,10 @@ export default function Dashboard() {
             <CardContent>
               <div className="space-y-2">
                 <Button className="w-full" variant="outline">
-                  Editar Perfil
+                  Configurações
                 </Button>
                 <Button className="w-full" variant="outline">
-                  Configurações
+                  Ajuda
                 </Button>
               </div>
             </CardContent>
